@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorBoard Elite</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#0f172a;
+color:white;
+}
+
+section{
+padding:80px 20px;
+text-align:center;
+}
+
+.btn{
+display:inline-block;
+padding:15px 35px;
+border-radius:30px;
+text-decoration:none;
+cursor:pointer;
+margin:10px;
+font-size:18px;
+}
+
+.primary{
+background:linear-gradient(90deg,#7b2ff7,#f107a3);
+color:white;
+}
+
+.secondary{
+background:white;
+color:#111;
+}
+
+.card{
+background:#1e293b;
+padding:25px;
+border-radius:15px;
+margin:20px auto;
+max-width:700px;
+}
+
+#demoSection, #dashboard, #bloqueado{
+display:none;
+}
+
+.sidebar{
+width:220px;
+background:#111827;
+height:100vh;
+position:fixed;
+padding:30px 20px;
+}
+
+.main{
+margin-left:220px;
+padding:40px;
+background:#f1f5f9;
+color:#111;
+min-height:100vh;
+}
+
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGINA DE VENTA ====== -->
+<section id="venta">
+<h1 style="font-size:55px;">CreatorBoard Elite</h1>
+<p>Dashboard profesional listo para creadores que quieren verse como empresa.</p>
+
+<h2>Precio lanzamiento: USD 67</h2>
+
+<a href="#" class="btn primary">Comprar ahora</a>
+
+<button class="btn secondary" onclick="mostrarDemo()">
+Ver Demo en Vivo
+</button>
+
+<div class="card">
+<h3>Incluye:</h3>
+<p>✔ Dashboard profesional</p>
+<p>✔ Gráficos animados</p>
+<p>✔ Prueba 24 hs</p>
+<p>✔ Sistema de licencia</p>
+<p>✔ Editable y revendible</p>
+</div>
+</section>
+
+<!-- ====== DEMO ====== -->
+<section id="demoSection">
+<h2>Estás viendo la versión DEMO</h2>
+<button class="btn primary" onclick="entrarApp()">Entrar al Dashboard</button>
+<button class="btn secondary" onclick="volverVenta()">Volver</button>
+</section>
+
+<!-- ====== DASHBOARD ====== -->
+<div id="dashboard">
+
+<div class="sidebar">
+<h2>CreatorBoard</h2>
+<p>📊 Dashboard</p>
+<p>💰 Ingresos</p>
+<p>📈 Analíticas</p>
+</div>
+
+<div class="main">
+<div class="card">
+<h3>Ingresos últimos meses</h3>
+<canvas id="grafico"></canvas>
+</div>
+
+<div class="card">
+<p><strong>Estado:</strong> <span id="estadoLicencia"></span></p>
+</div>
+</div>
+
+</div>
+
+<!-- ====== BLOQUEO ====== -->
+<section id="bloqueado">
+<h1>Prueba finalizada</h1>
+<p>Activa tu licencia para continuar</p>
+
+<input type="text" id="claveInput" placeholder="Ingresa tu clave">
+<br>
+<button class="btn primary" onclick="activarClave()">Activar</button>
+<br><br>
+<button class="btn secondary" onclick="volverVenta()">Volver a la venta</button>
+</section>
+
+<script>
+
+// CONFIG
+const horasPrueba = 24;
+const tiempoPrueba = horasPrueba * 60 * 60 * 1000;
+const CLAVE_CORRECTA = "ELITE-2026-97USD";
+
+// BOTONES
+function mostrarDemo(){
+document.getElementById("venta").style.display="none";
+document.getElementById("demoSection").style.display="block";
+}
+
+function volverVenta(){
+location.reload();
+}
+
+function entrarApp(){
+
+if(localStorage.getItem("licenciaActiva")){
+mostrarDashboard();
+return;
+}
+
+let inicio = localStorage.getItem("inicioPrueba");
+
+if(!inicio){
+localStorage.setItem("inicioPrueba", new Date().getTime());
+mostrarDashboard();
+return;
+}
+
+verificarPrueba();
+}
+
+function verificarPrueba(){
+
+if(localStorage.getItem("licenciaActiva")){
+mostrarDashboard();
+return;
+}
+
+let inicio = localStorage.getItem("inicioPrueba");
+let ahora = new Date().getTime();
+let diferencia = ahora - inicio;
+
+if(diferencia >= tiempoPrueba){
+bloquear();
+}else{
+mostrarDashboard();
+}
+}
+
+function mostrarDashboard(){
+document.getElementById("demoSection").style.display="none";
+document.getElementById("dashboard").style.display="block";
+
+if(localStorage.getItem("licenciaActiva")){
+document.getElementById("estadoLicencia").innerText="Licencia Activa";
+}else{
+document.getElementById("estadoLicencia").innerText="Modo Prueba";
+}
+
+crearGrafico();
+}
+
+function bloquear(){
+document.getElementById("dashboard").style.display="none";
+document.getElementById("bloqueado").style.display="block";
+}
+
+function activarClave(){
+let clave = document.getElementById("claveInput").value;
+
+if(clave === CLAVE_CORRECTA){
+localStorage.setItem("licenciaActiva", true);
+alert("Licencia activada");
+mostrarDashboard();
+}else{
+alert("Clave incorrecta");
+}
+}
+
+function crearGrafico(){
+const ctx = document.getElementById('grafico');
+
+new Chart(ctx, {
+type: 'line',
+data: {
+labels: ['Ene','Feb','Mar','Abr','May','Jun'],
+datasets: [{
+label: 'Ingresos ($)',
+data: [1200,1900,3000,5000,4200,6200],
+borderWidth:3,
+tension:0.4
+}]
+},
+options:{responsive:true}
+});
+}
+
+</script>
+
+</body>
+</html>
