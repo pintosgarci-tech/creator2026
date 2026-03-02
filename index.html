@@ -3,170 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CreatorBoard</title>
+<title>Creator Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
+*{
 margin:0;
-font-family:Arial, sans-serif;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
 background:#0f172a;
 color:white;
 text-align:center;
 }
+
 header{
-padding:40px;
-background:linear-gradient(90deg,#2563eb,#9333ea);
+padding:40px 20px;
 }
+
+header h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+header p{
+color:#94a3b8;
+}
+
 .portada{
-width:250px;
-margin:20px auto;
-display:block;
-border-radius:20px;
-box-shadow:0 0 30px rgba(0,0,0,0.5);
+width:100%;
+max-width:900px;
+margin:30px auto;
+border-radius:15px;
+box-shadow:0 20px 50px rgba(0,0,0,0.5);
 }
+
+.botones{
+margin-top:30px;
+}
+
 button{
-padding:12px 25px;
+padding:15px 30px;
+margin:10px;
 border:none;
-border-radius:8px;
+border-radius:10px;
+font-size:16px;
 cursor:pointer;
-font-weight:bold;
-margin:5px;
+transition:0.3s;
 }
-.primary{background:#22c55e;color:white;}
-.secondary{background:#3b82f6;color:white;}
-.container{padding:30px;}
-.card{
+
+.demo{
+background:#2563eb;
+color:white;
+}
+
+.demo:hover{
+background:#1e40af;
+}
+
+.pago{
+background:#22c55e;
+color:black;
+font-weight:bold;
+}
+
+.pago:hover{
+background:#16a34a;
+}
+
+.seccion{
+display:none;
+margin-top:40px;
+padding:20px;
+}
+
+input, textarea{
+width:100%;
+max-width:500px;
+padding:12px;
+margin:10px auto;
+border-radius:8px;
+border:none;
+display:block;
+font-size:15px;
+}
+
+.creado{
+margin-top:20px;
 background:#1e293b;
 padding:20px;
-margin:15px auto;
 border-radius:10px;
-max-width:400px;
-}
-input{
-padding:10px;
-width:90%;
-margin-top:10px;
-border-radius:6px;
-border:none;
-}
-.hidden{display:none;}
-ul{list-style:none;padding:0;}
-li{margin:10px 0;}
-footer{
-padding:20px;
-font-size:12px;
-opacity:0.6;
+max-width:600px;
+margin-left:auto;
+margin-right:auto;
 }
 </style>
 </head>
 <body>
 
-<header id="landing">
-
-<h1>CreatorBoard</h1>
-
-<!-- PORTADA -->
-<img src="portada.jp" class="portada">
-
-<p>Gestiona tus proyectos fácilmente en un solo lugar</p>
-
-<button class="secondary" onclick="entrarDemo()">Ver Demo</button>
-
-<a href="https://wa.me/59895916669?text=Quiero%20comprar%20CreatorBoard" target="_blank">
-<button class="primary">Comprar</button>
-</a>
-
+<header>
+<h1>Creator Pro</h1>
+<p>Crea y vende tus proyectos digitales fácilmente</p>
 </header>
 
-<div id="dashboard" class="hidden container">
+<img src="portada.jpg" class="portada">
 
-<h2>Panel Demo (24hs)</h2>
-<p id="tiempo"></p>
-
-<div class="card">
-<input type="text" id="nuevo" placeholder="Nuevo proyecto">
-<br>
-<button class="primary" onclick="agregar()">Agregar</button>
+<div class="botones">
+<button class="demo" onclick="mostrarDemo()">Probar Demo</button>
+<button class="pago" onclick="irPago()">Comprar Ahora</button>
 </div>
 
-<ul id="lista"></ul>
+<div class="seccion" id="demoSection">
+<h2>Crear Proyecto</h2>
 
-<button onclick="salir()">Salir</button>
+<input type="text" id="titulo" placeholder="Título del proyecto">
+<textarea id="descripcion" placeholder="Descripción del proyecto"></textarea>
+<input type="text" id="precio" placeholder="Precio (ej: 400 USD)">
 
+<button class="demo" onclick="crearProyecto()">Crear Proyecto</button>
+
+<div id="resultado"></div>
 </div>
-
-<footer>
-CreatorBoard © 2026
-</footer>
 
 <script>
-
-function entrarDemo(){
-document.getElementById("landing").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-
-if(!localStorage.getItem("inicio")){
-localStorage.setItem("inicio", Date.now());
+function mostrarDemo(){
+document.getElementById("demoSection").style.display = "block";
 }
 
-actualizarTiempo();
-cargar();
+function crearProyecto(){
+let titulo = document.getElementById("titulo").value;
+let descripcion = document.getElementById("descripcion").value;
+let precio = document.getElementById("precio").value;
+
+if(titulo === "") titulo = "Proyecto Demo";
+if(descripcion === "") descripcion = "Descripción de ejemplo";
+if(precio === "") precio = "400 USD";
+
+document.getElementById("resultado").innerHTML = `
+<div class="creado">
+<h3>${titulo}</h3>
+<p>${descripcion}</p>
+<p><strong>Precio:</strong> ${precio}</p>
+<p style="color:#22c55e;margin-top:10px;">Proyecto creado correctamente ✔</p>
+</div>
+`;
 }
 
-function actualizarTiempo(){
-let inicio = localStorage.getItem("inicio");
-let ahora = Date.now();
-let horas = 24 - Math.floor((ahora - inicio)/(1000*60*60));
-
-if(horas <= 0){
-alert("Demo finalizado. Compra la licencia para continuar.");
-salir();
-return;
+function irPago(){
+window.location.href="https://www.mercadopago.com";
 }
-
-document.getElementById("tiempo").innerText =
-"Tiempo restante: " + horas + " horas";
-}
-
-setInterval(actualizarTiempo,60000);
-
-function agregar(){
-let valor = document.getElementById("nuevo").value;
-if(valor==="") return;
-
-let datos = JSON.parse(localStorage.getItem("datos")) || [];
-datos.push(valor);
-localStorage.setItem("datos", JSON.stringify(datos));
-document.getElementById("nuevo").value="";
-cargar();
-}
-
-function cargar(){
-let lista = document.getElementById("lista");
-lista.innerHTML="";
-let datos = JSON.parse(localStorage.getItem("datos")) || [];
-
-datos.forEach((d,i)=>{
-let li=document.createElement("li");
-li.innerHTML=d+" <button onclick='borrar("+i+")'>X</button>";
-lista.appendChild(li);
-});
-}
-
-function borrar(i){
-let datos = JSON.parse(localStorage.getItem("datos")) || [];
-datos.splice(i,1);
-localStorage.setItem("datos", JSON.stringify(datos));
-cargar();
-}
-
-function salir(){
-document.getElementById("dashboard").classList.add("hidden");
-document.getElementById("landing").classList.remove("hidden");
-}
-
 </script>
 
 </body>
 </html>
-
